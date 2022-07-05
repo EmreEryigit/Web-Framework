@@ -1,7 +1,7 @@
 import { AxiosPromise, AxiosResponse } from "axios";
 
 
-interface HasID {
+export interface HasID {
     id?: number
 }
 interface ModelAttributes<T> {
