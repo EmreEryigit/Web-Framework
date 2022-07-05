@@ -1,6 +1,8 @@
-import { Eventing } from "./Eventing"
-import { Sync } from "./Sync"
+
+import { APISync } from "./APISync"
 import { Attributes } from "./Attributes"
+import { Eventing } from "./Eventing"
+import { Model } from "./Model"
 
 export interface UserProps {
     id?: number
@@ -8,21 +10,14 @@ export interface UserProps {
     age?: number
 }
 
-
-export class User {
-    events: Eventing = new Eventing()
-    sync: Sync<UserProps> = new Sync<UserProps>("http://localhost:3000/users")
-    attributes: Attributes<UserProps>
-    constructor(attrs: UserProps) {
-        this.attributes = new Attributes(attrs)
-    }
-
-    get on() { return this.events.on };
-    get trigger() {return this.events.trigger}
-    get get() { return this.attributes.get};
-
-    set(update: UserProps): void {
-        this.attributes.set(update)
-        this.events.trigger("change")
+const rootURL = "http://localhost:3000/users"
+export class User extends Model<UserProps> {
+    static buildUser(attrs: UserProps): User {
+        return new User(
+            new Attributes<UserProps>(attrs),
+            new Eventing(),
+            new APISync<UserProps>(rootURL)
+        )
     }
 }
+
